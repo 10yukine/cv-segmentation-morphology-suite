@@ -240,7 +240,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
+        if args.k < 1:
+            raise ValueError("--k must be at least 1")
+        if args.kernel < 1:
+            raise ValueError("--kernel must be at least 1")
+        if args.tolerance < 0:
+            raise ValueError("--tolerance must be zero or greater")
+        if not 0.0 <= args.peak <= 1.0:
+            raise ValueError("--peak must be between 0 and 1")
+
         image = load_image(args.image)
+        if args.mode == "kmeans" and args.k > image.shape[0] * image.shape[1]:
+            raise ValueError("--k cannot exceed the number of image pixels")
         panels = {
             "morphology": lambda: morphology(image, args.kernel),
             "threshold": lambda: thresholding(image),
